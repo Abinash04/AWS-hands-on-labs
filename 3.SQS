@@ -1,0 +1,715 @@
+# 3. SQS
+
+## create_queue.py
+
+import boto3
+
+# Create SQS client
+sqs = boto3.client('sqs')
+
+# Create a SQS queue
+response = sqs.create_queue(
+    QueueName='mynewq',
+    Attributes={
+        'DelaySeconds': '5',
+        'MessageRetentionPeriod': '86400'
+    }
+)
+
+print(response['QueueUrl'])
+
+
+## fast_consumer.py
+
+import boto3
+import json
+import time
+from sqs_url import QUEUE_URL
+
+# Create SQS client
+sqs = boto3.client('sqs')
+
+i = 0
+
+while i < 10000:
+    i = i + 1
+    rec_res = sqs.receive_message(
+        QueueUrl=QUEUE_URL,
+        MessageAttributeNames=[
+            'All',
+        ],
+        MaxNumberOfMessages=1,
+        VisibilityTimeout=5,
+        WaitTimeSeconds=10
+    )
+    del_res = sqs.delete_message(
+        QueueUrl=QUEUE_URL,
+        ReceiptHandle=rec_res['Messages'][0]['ReceiptHandle']
+    )
+    print("RECIEVED MESSAGE (FAST CONSUMER):")
+    print('FROM PRODUCER: ' + rec_res['Messages'][0]['MessageAttributes']['Producer']['StringValue'])
+    print('JOB TYPE: ' + rec_res['Messages'][0]['MessageAttributes']['JobType']['StringValue'])
+    print('BODY: ' + rec_res['Messages'][0]['Body'])
+    print("DELETED MESSAGE (FAST CONSUMER)")
+    print("")
+    time.sleep(2)
+
+## fast_data.json
+
+[
+  {
+    "name": "Harper Pierce",
+    "email": "harperpierce@thepenguinconsultingfirm.com",
+    "donation": 97.5
+  },
+  {
+    "name": "Lois Huber",
+    "email": "loishuber@thepenguinconsultingfirm.com",
+    "donation": 28.31
+  },
+  {
+    "name": "Cecile Hickman",
+    "email": "cecilehickman@thepenguinconsultingfirm.com",
+    "donation": 1.34
+  },
+  {
+    "name": "Shauna Brewer",
+    "email": "shaunabrewer@thepenguinconsultingfirm.com",
+    "donation": 82.54
+  },
+  {
+    "name": "Ayala Camacho",
+    "email": "ayalacamacho@thepenguinconsultingfirm.com",
+    "donation": 13.1
+  },
+  {
+    "name": "Hicks Wallace",
+    "email": "hickswallace@thepenguinconsultingfirm.com",
+    "donation": 87.34
+  },
+  {
+    "name": "Concepcion Hoffman",
+    "email": "concepcionhoffman@thepenguinconsultingfirm.com",
+    "donation": 74.94
+  },
+  {
+    "name": "Roberson Woodward",
+    "email": "robersonwoodward@thepenguinconsultingfirm.com",
+    "donation": 46.19
+  },
+  {
+    "name": "Mcgee Tanner",
+    "email": "mcgeetanner@thepenguinconsultingfirm.com",
+    "donation": 87.8
+  },
+  {
+    "name": "Sullivan Reed",
+    "email": "sullivanreed@thepenguinconsultingfirm.com",
+    "donation": 78.14
+  },
+  {
+    "name": "Patrick Vega",
+    "email": "patrickvega@thepenguinconsultingfirm.com",
+    "donation": 93.84
+  },
+  {
+    "name": "Yang Cole",
+    "email": "yangcole@thepenguinconsultingfirm.com",
+    "donation": 32.25
+  },
+  {
+    "name": "Lang James",
+    "email": "langjames@thepenguinconsultingfirm.com",
+    "donation": 17.64
+  },
+  {
+    "name": "Lauri Terry",
+    "email": "lauriterry@thepenguinconsultingfirm.com",
+    "donation": 27.53
+  },
+  {
+    "name": "Velasquez Nolan",
+    "email": "velasqueznolan@thepenguinconsultingfirm.com",
+    "donation": 96.47
+  },
+  {
+    "name": "Cochran Allison",
+    "email": "cochranallison@thepenguinconsultingfirm.com",
+    "donation": 90.35
+  },
+  {
+    "name": "Carson Bullock",
+    "email": "carsonbullock@thepenguinconsultingfirm.com",
+    "donation": 46.98
+  },
+  {
+    "name": "Neal Rowland",
+    "email": "nealrowland@thepenguinconsultingfirm.com",
+    "donation": 91.69
+  },
+  {
+    "name": "Wynn Austin",
+    "email": "wynnaustin@thepenguinconsultingfirm.com",
+    "donation": 27.12
+  },
+  {
+    "name": "Bray Meyers",
+    "email": "braymeyers@thepenguinconsultingfirm.com",
+    "donation": 78.85
+  },
+  {
+    "name": "Milagros Holt",
+    "email": "milagrosholt@thepenguinconsultingfirm.com",
+    "donation": 75.16
+  },
+  {
+    "name": "Ferguson Baldwin",
+    "email": "fergusonbaldwin@thepenguinconsultingfirm.com",
+    "donation": 59.39
+  },
+  {
+    "name": "Liliana Britt",
+    "email": "lilianabritt@thepenguinconsultingfirm.com",
+    "donation": 96.99
+  },
+  {
+    "name": "Johnston Vinson",
+    "email": "johnstonvinson@thepenguinconsultingfirm.com",
+    "donation": 33.22
+  },
+  {
+    "name": "Kristen Owens",
+    "email": "kristenowens@thepenguinconsultingfirm.com",
+    "donation": 54.17
+  },
+  {
+    "name": "Diane Riley",
+    "email": "dianeriley@thepenguinconsultingfirm.com",
+    "donation": 69.81
+  },
+  {
+    "name": "Yolanda Kline",
+    "email": "yolandakline@thepenguinconsultingfirm.com",
+    "donation": 25.45
+  },
+  {
+    "name": "Frank Pitts",
+    "email": "frankpitts@thepenguinconsultingfirm.com",
+    "donation": 55.88
+  },
+  {
+    "name": "Leticia Huff",
+    "email": "leticiahuff@thepenguinconsultingfirm.com",
+    "donation": 79.89
+  },
+  {
+    "name": "Pate Cleveland",
+    "email": "patecleveland@thepenguinconsultingfirm.com",
+    "donation": 73.24
+  },
+  {
+    "name": "Julianne Welch",
+    "email": "juliannewelch@thepenguinconsultingfirm.com",
+    "donation": 97.8
+  },
+  {
+    "name": "Morales Hobbs",
+    "email": "moraleshobbs@thepenguinconsultingfirm.com",
+    "donation": 73.49
+  },
+  {
+    "name": "Estela Spence",
+    "email": "estelaspence@thepenguinconsultingfirm.com",
+    "donation": 65.42
+  },
+  {
+    "name": "Snyder Yang",
+    "email": "snyderyang@thepenguinconsultingfirm.com",
+    "donation": 55.7
+  },
+  {
+    "name": "Melisa Alston",
+    "email": "melisaalston@thepenguinconsultingfirm.com",
+    "donation": 68.39
+  },
+  {
+    "name": "Guthrie Valdez",
+    "email": "guthrievaldez@thepenguinconsultingfirm.com",
+    "donation": 51.12
+  },
+  {
+    "name": "Edna Booker",
+    "email": "ednabooker@thepenguinconsultingfirm.com",
+    "donation": 22.9
+  },
+  {
+    "name": "Mcneil Cobb",
+    "email": "mcneilcobb@thepenguinconsultingfirm.com",
+    "donation": 31.24
+  },
+  {
+    "name": "Christian Duncan",
+    "email": "christianduncan@thepenguinconsultingfirm.com",
+    "donation": 17.22
+  },
+  {
+    "name": "Oneil Marsh",
+    "email": "oneilmarsh@thepenguinconsultingfirm.com",
+    "donation": 97.57
+  },
+  {
+    "name": "Small Parker",
+    "email": "smallparker@thepenguinconsultingfirm.com",
+    "donation": 100.91
+  },
+  {
+    "name": "Golden Steele",
+    "email": "goldensteele@thepenguinconsultingfirm.com",
+    "donation": 18.62
+  },
+  {
+    "name": "Hubbard Padilla",
+    "email": "hubbardpadilla@thepenguinconsultingfirm.com",
+    "donation": 60.78
+  },
+  {
+    "name": "Ayers Kirby",
+    "email": "ayerskirby@thepenguinconsultingfirm.com",
+    "donation": 96.57
+  },
+  {
+    "name": "Reynolds Long",
+    "email": "reynoldslong@thepenguinconsultingfirm.com",
+    "donation": 76.6
+  },
+  {
+    "name": "Barron Farley",
+    "email": "barronfarley@thepenguinconsultingfirm.com",
+    "donation": 88.5
+  },
+  {
+    "name": "Mckee Love",
+    "email": "mckeelove@thepenguinconsultingfirm.com",
+    "donation": 52.65
+  },
+  {
+    "name": "Crane Noel",
+    "email": "cranenoel@thepenguinconsultingfirm.com",
+    "donation": 12.78
+  },
+  {
+    "name": "Hendrix Odonnell",
+    "email": "hendrixodonnell@thepenguinconsultingfirm.com",
+    "donation": 48.6
+  },
+  {
+    "name": "Holloway Gilbert",
+    "email": "hollowaygilbert@thepenguinconsultingfirm.com",
+    "donation": 87.32
+  }
+]
+
+## fast_producer.py
+
+import boto3
+import json
+import time
+from sqs_url import QUEUE_URL
+
+# Create SQS client
+sqs = boto3.client('sqs')
+
+with open('fast_data.json', 'r') as f:
+    data = json.loads(f.read())
+
+for i in data:
+    msg_body = json.dumps(i)
+    response = sqs.send_message(
+        QueueUrl=QUEUE_URL,
+        MessageBody=msg_body,
+        DelaySeconds=2,
+        MessageAttributes={
+            'JobType': {
+                'DataType': 'String',queue_status.py
+                'StringValue': 'NewDonor'
+            },
+            'Producer': {
+                'DataType': 'String',
+                'StringValue': 'Fast'
+            }
+        }
+    )
+    print('Added a message with 1 second delay - FAST')
+    print(response)
+    time.sleep(1)
+
+## purge_queue.py
+
+import boto3
+from sqs_url import QUEUE_URL
+
+sqs = boto3.client('sqs')
+
+response = sqs.purge_queue(
+    QueueUrl=QUEUE_URL
+)
+
+## queue_status.py
+
+import boto3
+import time
+from sqs_url import QUEUE_URL
+
+sqs = boto3.client('sqs')
+
+i = 0 
+
+while i < 100000:
+    i = i + 1
+    time.sleep(1)
+    response = sqs.get_queue_attributes(
+        QueueUrl=QUEUE_URL,
+        AttributeNames=[
+            'ApproximateNumberOfMessages',
+            'ApproximateNumberOfMessagesNotVisible',
+            'ApproximateNumberOfMessagesDelayed',
+        ]
+    )
+    for attribute in response['Attributes']:
+        print(
+            response['Attributes'][attribute] + 
+            ' ' + 
+            attribute
+        )
+    print('')
+    print('')
+    print('')
+    print('')
+
+## slow_consumer.py
+
+import boto3
+import json
+import time
+from sqs_url import QUEUE_URL
+
+# Create SQS client
+sqs = boto3.client('sqs')
+
+i = 0
+
+while i < 10000:
+    i = i + 1
+    rec_res = sqs.receive_message(
+        QueueUrl=QUEUE_URL,
+        MessageAttributeNames=[
+            'All',
+        ],
+        MaxNumberOfMessages=1,
+        VisibilityTimeout=20,
+        WaitTimeSeconds=10
+    )
+    del_res = sqs.delete_message(
+        QueueUrl=QUEUE_URL,
+        ReceiptHandle=rec_res['Messages'][0]['ReceiptHandle']
+    )
+    print("RECIEVED MESSAGE (SLOW CONSUMER):")
+    print('FROM PRODUCER: ' + rec_res['Messages'][0]['MessageAttributes']['Producer']['StringValue'])
+    print('JOB TYPE: ' + rec_res['Messages'][0]['MessageAttributes']['JobType']['StringValue'])
+    print('BODY: ' + rec_res['Messages'][0]['Body'])
+    print("DELETED MESSAGE (SLOW CONSUMER)")
+    print("")
+    time.sleep(8)
+
+## slow_data.json
+
+[
+  {
+    "name": "Armstrong Taylor",
+    "email": "armstrongtaylor@thepenguinconsultingfirm.com",
+    "donation": 108.4
+  },
+  {
+    "name": "Imogene Norman",
+    "email": "imogenenorman@thepenguinconsultingfirm.com",
+    "donation": 12.27
+  },
+  {
+    "name": "Roberta Moody",
+    "email": "robertamoody@thepenguinconsultingfirm.com",
+    "donation": 141.26
+  },
+  {
+    "name": "York Turner",
+    "email": "yorkturner@thepenguinconsultingfirm.com",
+    "donation": 146.42
+  },
+  {
+    "name": "Nikki Baxter",
+    "email": "nikkibaxter@thepenguinconsultingfirm.com",
+    "donation": 54.64
+  },
+  {
+    "name": "Angela Dominguez",
+    "email": "angeladominguez@thepenguinconsultingfirm.com",
+    "donation": 45.57
+  },
+  {
+    "name": "Newton Garza",
+    "email": "newtongarza@thepenguinconsultingfirm.com",
+    "donation": 11.55
+  },
+  {
+    "name": "Audra Foley",
+    "email": "audrafoley@thepenguinconsultingfirm.com",
+    "donation": 62.51
+  },
+  {
+    "name": "Esperanza Barker",
+    "email": "esperanzabarker@thepenguinconsultingfirm.com",
+    "donation": 45.82
+  },
+  {
+    "name": "Ford Castro",
+    "email": "fordcastro@thepenguinconsultingfirm.com",
+    "donation": 31.81
+  },
+  {
+    "name": "Sharon Short",
+    "email": "sharonshort@thepenguinconsultingfirm.com",
+    "donation": 105.73
+  },
+  {
+    "name": "Pena Ward",
+    "email": "penaward@thepenguinconsultingfirm.com",
+    "donation": 118.36
+  },
+  {
+    "name": "Conrad Roy",
+    "email": "conradroy@thepenguinconsultingfirm.com",
+    "donation": 69.13
+  },
+  {
+    "name": "Ebony Dunlap",
+    "email": "ebonydunlap@thepenguinconsultingfirm.com",
+    "donation": 33.69
+  },
+  {
+    "name": "Yang Mccarty",
+    "email": "yangmccarty@thepenguinconsultingfirm.com",
+    "donation": 92.34
+  },
+  {
+    "name": "Ramsey Hart",
+    "email": "ramseyhart@thepenguinconsultingfirm.com",
+    "donation": 70.6
+  },
+  {
+    "name": "Hood Pearson",
+    "email": "hoodpearson@thepenguinconsultingfirm.com",
+    "donation": 33.95
+  },
+  {
+    "name": "Jillian Patrick",
+    "email": "jillianpatrick@thepenguinconsultingfirm.com",
+    "donation": 148.82
+  },
+  {
+    "name": "Hendricks Dunn",
+    "email": "hendricksdunn@thepenguinconsultingfirm.com",
+    "donation": 2.38
+  },
+  {
+    "name": "Herring Herrera",
+    "email": "herringherrera@thepenguinconsultingfirm.com",
+    "donation": 48.18
+  },
+  {
+    "name": "Conner Parks",
+    "email": "connerparks@thepenguinconsultingfirm.com",
+    "donation": 85.48
+  },
+  {
+    "name": "Larsen Goodwin",
+    "email": "larsengoodwin@thepenguinconsultingfirm.com",
+    "donation": 51.73
+  },
+  {
+    "name": "Holcomb Rhodes",
+    "email": "holcombrhodes@thepenguinconsultingfirm.com",
+    "donation": 145.9
+  },
+  {
+    "name": "Leila Cleveland",
+    "email": "leilacleveland@thepenguinconsultingfirm.com",
+    "donation": 42.96
+  },
+  {
+    "name": "Deanna Gross",
+    "email": "deannagross@thepenguinconsultingfirm.com",
+    "donation": 95.98
+  },
+  {
+    "name": "Victoria Whitehead",
+    "email": "victoriawhitehead@thepenguinconsultingfirm.com",
+    "donation": 146.43
+  },
+  {
+    "name": "Isabella Hawkins",
+    "email": "isabellahawkins@thepenguinconsultingfirm.com",
+    "donation": 77.86
+  },
+  {
+    "name": "Kirby Simpson",
+    "email": "kirbysimpson@thepenguinconsultingfirm.com",
+    "donation": 62.66
+  },
+  {
+    "name": "Hicks Mendez",
+    "email": "hicksmendez@thepenguinconsultingfirm.com",
+    "donation": 20.47
+  },
+  {
+    "name": "Mendez Wilson",
+    "email": "mendezwilson@thepenguinconsultingfirm.com",
+    "donation": 107.23
+  },
+  {
+    "name": "Hoover Mckee",
+    "email": "hoovermckee@thepenguinconsultingfirm.com",
+    "donation": 143.4
+  },
+  {
+    "name": "Penelope Lamb",
+    "email": "penelopelamb@thepenguinconsultingfirm.com",
+    "donation": 42.11
+  },
+  {
+    "name": "Iva Callahan",
+    "email": "ivacallahan@thepenguinconsultingfirm.com",
+    "donation": 57.5
+  },
+  {
+    "name": "Bernadette Duffy",
+    "email": "bernadetteduffy@thepenguinconsultingfirm.com",
+    "donation": 12.71
+  },
+  {
+    "name": "Lakisha Park",
+    "email": "lakishapark@thepenguinconsultingfirm.com",
+    "donation": 103.62
+  },
+  {
+    "name": "Decker Mueller",
+    "email": "deckermueller@thepenguinconsultingfirm.com",
+    "donation": 48.7
+  },
+  {
+    "name": "Torres Wynn",
+    "email": "torreswynn@thepenguinconsultingfirm.com",
+    "donation": 26.27
+  },
+  {
+    "name": "Deloris Pitts",
+    "email": "delorispitts@thepenguinconsultingfirm.com",
+    "donation": 68.45
+  },
+  {
+    "name": "Lorie Boyer",
+    "email": "lorieboyer@thepenguinconsultingfirm.com",
+    "donation": 113.36
+  },
+  {
+    "name": "Mcdonald Walls",
+    "email": "mcdonaldwalls@thepenguinconsultingfirm.com",
+    "donation": 21.46
+  },
+  {
+    "name": "Jarvis Ortiz",
+    "email": "jarvisortiz@thepenguinconsultingfirm.com",
+    "donation": 129.97
+  },
+  {
+    "name": "Angie Church",
+    "email": "angiechurch@thepenguinconsultingfirm.com",
+    "donation": 55.89
+  },
+  {
+    "name": "Snider Chase",
+    "email": "sniderchase@thepenguinconsultingfirm.com",
+    "donation": 119.23
+  },
+  {
+    "name": "June Willis",
+    "email": "junewillis@thepenguinconsultingfirm.com",
+    "donation": 27.53
+  },
+  {
+    "name": "Virginia Moses",
+    "email": "virginiamoses@thepenguinconsultingfirm.com",
+    "donation": 15.6
+  },
+  {
+    "name": "Cortez Calderon",
+    "email": "cortezcalderon@thepenguinconsultingfirm.com",
+    "donation": 127.56
+  },
+  {
+    "name": "Benson Pruitt",
+    "email": "bensonpruitt@thepenguinconsultingfirm.com",
+    "donation": 145.26
+  },
+  {
+    "name": "Mccoy Tate",
+    "email": "mccoytate@thepenguinconsultingfirm.com",
+    "donation": 99.37
+  },
+  {
+    "name": "Woodard Koch",
+    "email": "woodardkoch@thepenguinconsultingfirm.com",
+    "donation": 118.42
+  },
+  {
+    "name": "Elvia Hull",
+    "email": "elviahull@thepenguinconsultingfirm.com",
+    "donation": 61.2
+  }
+]
+
+## slow_producer.py
+
+import boto3
+import json
+import time
+from sqs_url import QUEUE_URL
+
+# Create SQS client
+sqs = boto3.client('sqs')
+
+with open('slow_data.json', 'r') as f:
+    data = json.loads(f.read())
+
+for i in data:
+    msg_body = json.dumps(i)
+    response = sqs.send_message(
+        QueueUrl=QUEUE_URL,
+        MessageBody=msg_body,
+        DelaySeconds=10,
+        MessageAttributes={
+            'JobType': {
+                'DataType': 'String',
+                'StringValue': 'NewDonor'
+            },
+            'Producer': {
+                'DataType': 'String',
+                'StringValue': 'Slow'
+            }
+        }
+    )
+    print('Added a message with 10 second delay - SLOW')
+    print(response)
+    time.sleep(1)
+
+## sqs_url.py
+QUEUE_URL = 'https://sqs.us-east-1.amazonaws.com/747548145378/mynewq'
+
