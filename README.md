@@ -27,5 +27,8 @@ Hands on labs in AWS
 
 ![image](https://github.com/Abinash04/AWS-hands-on-labs/assets/15240069/1ddb191c-4dcf-48c4-8a4a-f005540f2e2d)
 
+![image](https://github.com/Abinash04/AWS-hands-on-labs/assets/15240069/32f95ec5-da95-49fa-b746-73e539f2aebd)
+
+
 
 
