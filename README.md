@@ -60,7 +60,8 @@ Hands on labs in AWS
 
 ![image](https://github.com/Abinash04/AWS-hands-on-labs/assets/15240069/b160a9f0-0f2a-4df9-b965-63a85bee4d97)
 
-![image](https://github.com/Abinash04/AWS-hands-on-labs/assets/15240069/b84b9cd7-4fba-4005-a601-5e40bef0be12)
+![image](https://github.com/Abinash04/AWS-hands-on-labs/assets/15240069/1df629a5-6751-4064-82e9-2612a5591c96)
+
 
 
 
